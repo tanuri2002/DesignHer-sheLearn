@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SheLearn 🎓✨
 > A peer skill exchange and AI-powered learning platform built for women in engineering.
 
@@ -226,3 +227,7 @@ DesignHer 2.0 Competition — Faculty of Engineering
 ---
 
 *SheLearn — Learn from her. Grow together.*
+=======
+# DesignHer-sheLearn
+An AI-powered peer skill exchange platform for women in engineering. Get personalized learning roadmaps, connect with peers, book 1-on-1 sessions, and grow together.
+>>>>>>> df2e742ae608b40741f1d7ffcf00a5ed7b5b285c
