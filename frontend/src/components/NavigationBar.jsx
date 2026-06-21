@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -25,6 +25,41 @@ const navLinks = [
   { label: "Learning Tracks", path: "/tracks" },
   { label: "Find Peers",      path: "/peers" },
 ];
+
+function NotificationBell() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("/api/notifications", { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => res.json())
+      .then(data => setCount(data.filter(n => !n.read).length))
+      .catch(() => {});
+  }, []);
+
+  return (
+    <Link to="/profile" style={{
+      position: "relative", marginLeft: 8,
+      textDecoration: "none", fontSize: 18,
+      display: "inline-flex", alignItems: "center",
+    }}>
+      🔔
+      {count > 0 && (
+        <span style={{
+          position: "absolute", top: -4, right: -6,
+          background: "#D32F2F", color: "#fff",
+          fontSize: 10, fontWeight: 700,
+          width: 16, height: 16, borderRadius: "50%",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 export default function NavigationBar() {
   const location = useLocation();
@@ -98,27 +133,30 @@ export default function NavigationBar() {
 
         {/* Auth area — swaps based on login state */}
         {user ? (
-          <Link
-            to="/profile-setup"
-            className="ml-3 relative inline-flex items-center gap-2 rounded-full px-4 py-1.5
-                       bg-gradient-to-r from-violet-600 via-fuchsia-500 to-violet-600
-                       bg-[length:200%_100%] animate-shimmer
-                       text-white text-sm font-semibold shadow-lg shadow-violet-300/50
-                       hover:scale-105 transition-transform duration-200"
-          >
-            {user.profilePicture ? (
-              <img
-                src={user.profilePicture}
-                alt="Profile"
-                className="w-6 h-6 rounded-full object-cover border-2 border-white"
-              />
-            ) : (
-              <span className="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center text-xs">
-                {user.fullName?.charAt(0).toUpperCase()}
-              </span>
-            )}
-            <span>Profile</span>
-          </Link>
+          <>
+            <NotificationBell />
+            <Link
+              to="/profile"
+              className="ml-3 relative inline-flex items-center gap-2 rounded-full px-4 py-1.5
+                         bg-gradient-to-r from-violet-600 via-fuchsia-500 to-violet-600
+                         bg-[length:200%_100%] animate-shimmer
+                         text-white text-sm font-semibold shadow-lg shadow-violet-300/50
+                         hover:scale-105 transition-transform duration-200"
+            >
+              {user.profilePicture ? (
+                <img
+                  src={user.profilePicture}
+                  alt="Profile"
+                  className="w-6 h-6 rounded-full object-cover border-2 border-white"
+                />
+              ) : (
+                <span className="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center text-xs">
+                  {user.fullName?.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <span>Profile</span>
+            </Link>
+          </>
         ) : (
           <>
             <Link to="/login" style={{

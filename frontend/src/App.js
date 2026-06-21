@@ -10,7 +10,7 @@ import About from './pages/About';
 import Peers from './pages/Peers';
 import LearningTracks from './pages/LearningTracks';
 import NavigationBar from './components/NavigationBar';
-import ProfileSetup from './pages/ProfileSetup';
+import ProfilePage from './pages/ProfilePage';
 
 const App = () => {
   return (
@@ -25,16 +25,11 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/peers" element={<Peers />} />
           <Route path="/tracks" element={<LearningTracks />} />
-          <Route path="/profile-setup" element={<ProfileSetup />} />setup page
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </div>
     </BrowserRouter>
   </AuthProvider>
   );
 }
-
 export default App;
-
-
-
-

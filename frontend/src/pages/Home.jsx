@@ -40,13 +40,13 @@ const features = [
     title: "Peer Session Booking",
     desc: "Find a peer who already knows what you're learning. Book a 1-on-1 session, ask questions freely, and grow together.",
   },
-  {
-    icon: "🏅",
-    color: "#FFF8E1",
-    accent: "#E65100",
-    title: "Badges & Recognition",
-    desc: "Earn badges every time you teach, learn, or hit a streak. Your contributions are visible on the community leaderboard.",
-  },
+  // {
+  //   icon: "🏅",
+  //   color: "#FFF8E1",
+  //   accent: "#E65100",
+  //   title: "Badges & Recognition",
+  //   desc: "Earn badges every time you teach, learn, or hit a streak. Your contributions are visible on the community leaderboard.",
+  // },
   {
     icon: "🤝",
     color: "#FDE8F0",
@@ -67,7 +67,7 @@ const steps = [
   { label: "Pick your field", detail: "Cybersecurity, AI, Web Dev — any direction you dream of." },
   { label: "Get your roadmap", detail: "AI builds a personalised, milestone-by-milestone learning plan." },
   { label: "Learn with peers", detail: "Book sessions with peers who can guide you through each stage." },
-  { label: "Grow & get recognised", detail: "Earn badges, climb the leaderboard, and own your journey." },
+  // { label: "Grow & get recognised", detail: "Earn badges, climb the leaderboard, and own your journey." },
 ];
 
 const testimonials = [
@@ -131,7 +131,7 @@ function Hero() {
       }}>
         Struggling to find the path to{" "}
         <span style={{ color: palette.lavender, fontStyle: "italic" }}>your favourite career?</span>
-        <br />We'll guide you — every step.
+        <br />We'll guide you - every step.
       </h1>
 
       <p style={{
@@ -355,7 +355,7 @@ function Footer() {
           </div>
           {[
             { heading: "Platform", links: ["Learning tracks", "Find peers", "Book a session", "Leaderboard"] },
-            { heading: "Community", links: ["How it works", "Badges", "Dashboard", "Profile"] },
+            { heading: "Community", links: ["How it works", "Dashboard", "Profile"] },
             { heading: "About", links: ["DesignHer 2.0", "University of Ruhuna", "Contact", "GitHub"] },
           ].map(col => (
             <div key={col.heading}>

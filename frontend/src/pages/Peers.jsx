@@ -188,23 +188,27 @@ function BookingModal({ peer, onClose }) {
 
   const slots = ["9:00 AM", "10:30 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM"];
 
-  const confirmBooking = async () => {
-    setSubmitting(true);
-    setError("");
-    try {
-      const res = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ peerId: peer._id, topic, slot }),
-      });
-      if (!res.ok) throw new Error("Could not book this session. Please try a different slot.");
-      setSubmitted(true);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+const confirmBooking = async () => {
+  setSubmitting(true);
+  setError("");
+  try {
+    const res = await fetch("/api/sessions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ teacherId: peer._id, topic, slot }),
+    });
+
+    if (!res.ok) throw new Error("Could not book this session. Please try a different slot.");
+    setSubmitted(true);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   if (submitted) {
     return (
@@ -345,7 +349,7 @@ export default function Peers() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch("/api/peers");
+        const res = await fetch("http://localhost:5000/api/peers");
         if (!res.ok) throw new Error("Could not load peers right now.");
         const data = await res.json();
         setPeers(data);
@@ -503,7 +507,14 @@ export default function Peers() {
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
                 {filtered.map(peer => (
-                  <PeerCard key={peer._id} peer={peer} onBook={setBookingPeer} />
+                  <PeerCard
+                    key={peer._id}
+                    peer={peer}
+                    onBook={(p) => {
+                      console.log("booking requested:", p && (p._id || p.id || p.fullName));
+                      setBookingPeer(p);
+                    }}
+                  />
                 ))}
               </div>
             )}

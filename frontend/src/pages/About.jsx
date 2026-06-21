@@ -122,7 +122,7 @@ export default function About() {
               <span style={{ color: palette.violet, fontStyle: "italic" }}>clear path forward.</span>
             </h2>
             <p style={{ fontFamily: font.body, fontSize: 14, color: palette.muted, lineHeight: 1.8, marginBottom: "1rem" }}>
-              The gender gap in engineering isn't just about admissions — it's about what happens after. Women enter universities with passion and potential, but often hit a wall when they try to figure out what to learn next, who to learn from, and where they're headed.
+              The gender gap in engineering isn't just about admissions - it's about what happens after. Women enter universities with passion and potential, but often hit a wall when they try to figure out what to learn next, who to learn from, and where they're headed.
             </p>
             <p style={{ fontFamily: font.body, fontSize: 14, color: palette.muted, lineHeight: 1.8 }}>
               SheLearn exists to tear down that wall. With AI-generated learning roadmaps, curated free resources, and a peer community that genuinely supports each other, we give women in engineering the clarity and confidence to own their career paths.
