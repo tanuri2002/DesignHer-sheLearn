@@ -1,5 +1,5 @@
 # SheLearn 🎓✨
-> A peer skill exchange and AI-powered learning platform built for women in engineering.
+> An AI-powered career guidance and peer skill exchange platform for women in engineering.
 
 ---
 
@@ -17,10 +17,11 @@ This gap leaves many talented students feeling lost — unsure of what to learn 
 
 A student can:
 1. Enter any field she wants to learn (e.g. Cybersecurity, AI/ML, Web Development)
-2. Receive an AI-generated, milestone-based learning roadmap with curated free resources (YouTube videos, courses, articles)
-3. Be matched with a peer who can teach her the next skill she needs
-4. Book 1-on-1 sessions with peers, rate sessions, and track her progress
-5. Earn badges and climb a community leaderboard that recognises contribution
+2. Receive an AI-generated, milestone-based learning roadmap with curated free resources (YouTube videos, courses, articles) and popular certificate course suggestions
+3. Sign up and optionally list skills she can teach and skills she wants to learn
+4. Be matched with real peers from the community who can teach her the next skill she needs
+5. Book 1-on-1 sessions with peers
+6. Earn badges as she teaches, learns, and grows with the community
 
 SheLearn doesn't just connect students — it empowers them with a clear path forward and a community to grow with.
 
@@ -31,11 +32,9 @@ SheLearn doesn't just connect students — it empowers them with a clear path fo
 ### Frontend
 | Technology | Purpose | Evidence |
 |---|---|---|
-| React.js (Vite) | UI framework and build tool | `frontend/package.json` → `"react": "^18.x"` |
-| Tailwind CSS | Utility-first styling | `frontend/tailwind.config.js` |
-| React Router DOM | Client-side page navigation | `frontend/src/router/index.jsx` |
-| Axios | HTTP requests to backend API | `frontend/src/api/axios.js` |
-| Lucide React | Icon library | Used throughout UI components |
+| React.js (Create React App) | UI framework and build tool | `frontend/package.json` → `"react-scripts"` |
+| React Router DOM | Client-side page navigation | Routes defined in `frontend/src/App.js` |
+| Inline JS styling (CSS-in-JS) | Component styling | Used throughout `frontend/src/pages/` and `frontend/src/components/` |
 
 ### Backend
 | Technology | Purpose | Evidence |
@@ -45,18 +44,18 @@ SheLearn doesn't just connect students — it empowers them with a clear path fo
 | JSON Web Tokens (JWT) | User authentication | `backend/middleware/auth.js` |
 | bcryptjs | Password hashing | `backend/controllers/authController.js` |
 | dotenv | Environment variable management | `backend/.env` (not committed) |
+| cors | Cross-origin requests between Vercel and Railway | `backend/server.js` |
 
 ### AI Integration
 | Technology | Purpose | Evidence |
 |---|---|---|
-| Anthropic Claude API | Learning roadmap generation + peer matching | `backend/controllers/aiController.js` |
-| Claude claude-sonnet-4-6 model | Structured JSON roadmap generation | API call in `aiController.js` |
+| Anthropic Claude API | Learning roadmap + certificate course generation | `backend/controllers/aiController.js` |
 
 ### Deployment
 | Service | Purpose |
 |---|---|
 | Vercel | Frontend hosting |
-| Render | Backend hosting |
+| Railway | Backend hosting |
 | MongoDB Atlas | Cloud database |
 
 ---
@@ -70,39 +69,39 @@ SheLearn doesn't just connect students — it empowers them with a clear path fo
                             │  HTTPS
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                FRONTEND — React.js + Tailwind CSS               │
+│                FRONTEND — React.js (Create React App)           │
 │                      Hosted on Vercel                           │
 │                                                                 │
 │  ┌──────────┐ ┌──────────┐ ┌────────────┐ ┌─────────────────┐  │
-│  │ Landing  │ │Dashboard │ │Find Peers  │ │ Learning Tracks │  │
+│  │   Home   │ │  SignUp  │ │   Login    │ │ Learning Tracks │  │
 │  └──────────┘ └──────────┘ └────────────┘ └─────────────────┘  │
 │  ┌──────────┐ ┌──────────┐ ┌────────────┐                       │
-│  │  Booking │ │  My Path │ │Leaderboard │                       │
+│  │  Peers   │ │ Profile  │ │   About    │                       │
 │  └──────────┘ └──────────┘ └────────────┘                       │
 └───────────────────────────┬─────────────────────────────────────┘
-                            │  REST API (Axios)
+                            │  REST API (fetch)
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              BACKEND — Node.js + Express.js                     │
-│                      Hosted on Render                           │
+│                      Hosted on Railway                          │
 │                                                                 │
 │  ┌─────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ Auth Routes │  │ User Routes  │  │   AI Routes          │   │
-│  │ /api/auth   │  │ /api/users   │  │   /api/ai            │   │
+│  │ Auth Routes │  │ Peer Routes  │  │  Session Routes      │   │
+│  │ /api/auth   │  │ /api/peers   │  │  /api/sessions       │   │
 │  └──────┬──────┘  └──────┬───────┘  └──────────┬───────────┘   │
 │         │                │                      │               │
-│  ┌──────▼────────────────▼──────┐    ┌──────────▼───────────┐   │
-│  │     Mongoose ODM             │    │  Anthropic Claude    │   │
-│  │  (Models: User, Session,     │    │  API Integration     │   │
-│  │   Skill, Badge, Track)       │    │  (Roadmap + Matching)│   │
-│  └──────────────┬───────────────┘    └──────────────────────┘   │
-└─────────────────┼───────────────────────────────────────────────┘
-                  │  Mongoose connection
-                  ▼
+│  ┌──────▼────────────────▼──────────────────────▼───────────┐   │
+│  │     Mongoose ODM                                          │   │
+│  │  (Models: User, Session)                                  │   │
+│  │  + Badge award logic (backend/utils/badges.js)            │   │
+│  └──────────────────────────┬───────────────────────────────┘   │
+└─────────────────────────────┼───────────────────────────────────┘
+                              │  Mongoose connection
+                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                  MongoDB Atlas (Cloud Database)                  │
 │                                                                 │
-│   Collections: users · sessions · skills · badges · tracks     │
+│             Collections: users · sessions                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -111,64 +110,61 @@ SheLearn doesn't just connect students — it empowers them with a clear path fo
 ## ✨ Key Features
 
 ### 🤖 AI-Powered Learning Tracks
-- Enter any field (Cybersecurity, AI/ML, Web Dev, Networking, etc.)
-- Claude AI generates a structured, milestone-based roadmap
-- Each milestone includes free YouTube videos, free courses, and articles
-- Progress is tracked per milestone with checkboxes
+- Enter any field (Cybersecurity, AI/ML, Web Dev, Networking, etc.) or pick a popular one
+- Choose your current level (complete beginner, some basics, intermediate)
+- AI generates a structured, milestone-based roadmap with free YouTube videos, courses, and articles
+- Includes a list of popular certificate courses relevant to the chosen field
+- Peer suggestions appear at key milestones to encourage practice with a real person
 
 ### 👩‍💻 Peer Skill Exchange
-- Post skills you can teach and skills you want to learn
-- Browse and filter peers by skill category
-- AI matches you with the best peer based on your learning goals
+- During sign-up, students can optionally list skills they can teach and skills they want to learn
+- Students choose whether their card appears on the Find Peers page
+- All peer cards are generated dynamically from real signup data in MongoDB — nothing is hardcoded
+- Browse and filter peers by skill category and availability
 
 ### 📅 Session Booking
-- Book 1-on-1 sessions with peers via an interactive calendar
-- Choose topic, duration, and time slot
-- Rate and review sessions after completion
+- Book 1-on-1 sessions with peers — choose a topic and time slot
+- Booking automatically updates each user's session counters
 
-### 🏆 Gamification & Community
-- Earn badges for teaching, learning, and streaks
-- Community leaderboard with XP system
-- Recognition for contributions encourages active participation
+### 🏆 Badges & Recognition
+- Badges are awarded automatically based on real activity (first session booked, first session taught, 5 sessions taught, profile completed, etc.)
+- Badges are visible on the user's Profile page and as small icons on their Peer card
 
 ### 🔐 Secure Authentication
 - JWT-based user registration and login
 - Passwords hashed with bcrypt
-- Protected routes for authenticated users only
+- Protected routes for authenticated actions (e.g. booking a session)
 
 ### 📱 Responsive Design
 - Fully responsive across desktop, tablet, and mobile
-- Clean, accessible UI built with Tailwind CSS
 
 ---
 
 ## 📁 Project Structure
 
 ```
-shelearn/
-├── frontend/                   # React.js application
+sheLearn/
+├── frontend/                   # React.js application (Create React App)
 │   ├── src/
-│   │   ├── components/         # Reusable UI components
-│   │   ├── pages/              # Page components (Dashboard, Peers, etc.)
-│   │   ├── api/                # Axios API calls
-│   │   ├── context/            # Auth context
-│   │   └── router/             # React Router config
-│   ├── tailwind.config.js
+│   │   ├── components/         # Reusable UI components (NavigationBar, BadgeComponents, etc.)
+│   │   ├── pages/               # Page components (Home, SignUp, Login, Peers, Profile, About, etc.)
+│   │   ├── context/              # Auth context
+│   │   ├── api.js                # Central API URL config (REACT_APP_API_URL)
+│   │   └── App.js                # Route definitions
 │   └── package.json
 │
 ├── backend/                    # Node.js + Express API
 │   ├── controllers/            # Route logic
 │   │   ├── authController.js
-│   │   ├── userController.js
-│   │   ├── sessionController.js
-│   │   └── aiController.js     # Claude API integration
+│   │   ├── peerController.js
+│   │   └── sessionController.js
 │   ├── models/                 # Mongoose schemas
 │   │   ├── User.js
-│   │   ├── Session.js
-│   │   ├── Skill.js
-│   │   └── Track.js
+│   │   └── Session.js
 │   ├── routes/                 # Express routes
 │   ├── middleware/             # JWT auth middleware
+│   ├── utils/
+│   │   └── badges.js           # Badge definitions and award logic
 │   ├── server.js               # Entry point
 │   └── package.json
 │
@@ -187,7 +183,7 @@ shelearn/
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/tanuri2002/sheLearn.git
-cd shelearn
+cd sheLearn
 ```
 
 ### 2. Backend setup
@@ -210,10 +206,17 @@ npm run dev
 ```bash
 cd ../frontend
 npm install
-npm run dev
+npm start
 ```
 
-Visit `http://localhost:5173` to view the app.
+Visit `http://localhost:3000` to view the app.
+
+---
+
+## 🌐 Live Deployment
+
+- **Frontend (Vercel):** https://design-her-she-learn.vercel.app
+- **Backend (Railway):** https://designher-shelearn-production.up.railway.app
 
 ---
 
@@ -226,7 +229,3 @@ DesignHer 2.0 Competition — Faculty of Engineering
 ---
 
 *SheLearn — Learn from her. Grow together.*
-=======
-# DesignHer-sheLearn
-An AI-powered peer skill exchange platform for women in engineering. Get personalized learning roadmaps, connect with peers, book 1-on-1 sessions, and grow together.
->>>>>>> df2e742ae608b40741f1d7ffcf00a5ed7b5b285c
