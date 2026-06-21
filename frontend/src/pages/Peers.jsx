@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiFetch } from "../api";
 
 const palette = {
   plum:    "#3B1F5E",
@@ -192,7 +193,7 @@ const confirmBooking = async () => {
   setSubmitting(true);
   setError("");
   try {
-    const res = await fetch("/api/sessions", {
+    const res = await apiFetch("/api/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -349,7 +350,7 @@ export default function Peers() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch("http://localhost:5000/api/peers");
+        const res = await apiFetch("/api/peers");
         if (!res.ok) throw new Error("Could not load peers right now.");
         const data = await res.json();
         setPeers(data);

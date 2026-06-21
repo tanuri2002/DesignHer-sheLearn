@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiFetch } from "../api";
 
 const palette = {
   plum:    "#3B1F5E",
@@ -122,8 +123,8 @@ export default function SessionsTab() {
     setError("");
     try {
       const [mineRes, reqRes] = await Promise.all([
-        fetch("/api/sessions/mine", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/sessions/requests", { headers: { Authorization: `Bearer ${token}` } }),
+        apiFetch("/api/sessions/mine", { headers: { Authorization: `Bearer ${token}` } }),
+        apiFetch("/api/sessions/requests", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       if (!mineRes.ok || !reqRes.ok) throw new Error("Could not load sessions.");
       setMySessions(await mineRes.json());
@@ -139,7 +140,7 @@ export default function SessionsTab() {
 
   const handleRespond = async (sessionId, status) => {
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/respond`, {
+      const res = await apiFetch(`/api/sessions/${sessionId}/respond`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

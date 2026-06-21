@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiFetch } from "../api";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -50,7 +51,7 @@ export default function Login() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: form.email, password: form.password }),

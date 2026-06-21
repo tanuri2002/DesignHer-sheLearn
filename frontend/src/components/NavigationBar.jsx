@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiFetch } from "../api";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -33,10 +34,10 @@ function NotificationBell() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("/api/notifications", { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => res.json())
-      .then(data => setCount(data.filter(n => !n.read).length))
-      .catch(() => {});
+      apiFetch("/api/notifications", { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => setCount(data.filter(n => !n.read).length))
+        .catch(() => {});
   }, []);
 
   return (

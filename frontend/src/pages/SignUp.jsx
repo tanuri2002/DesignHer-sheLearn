@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiFetch } from "../api";
 import { Link, useNavigate } from "react-router-dom";
 
 const palette = {
@@ -180,7 +181,7 @@ export default function SignUp() {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await apiFetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

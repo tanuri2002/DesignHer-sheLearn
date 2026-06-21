@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../api";
 
 const palette = {
   plum:    "#3B1F5E",
@@ -68,7 +69,7 @@ export default function ProfileSettingsTab() {
       formData.append("bio", bio);
       if (imageFile) formData.append("profilePicture", imageFile);
 
-      const res = await fetch("http://localhost:5000/api/users/profile", {
+      const res = await apiFetch("/api/users/profile", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiFetch } from "../api";
 import ProfileSettingsTab from "../components/ProfileSettingsTab";
 import SessionsTab from "../components/SessionsTab";
 import { useAuth } from "../context/AuthContext";
@@ -29,7 +30,7 @@ function NotificationsTab() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("/api/notifications", { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch("/api/notifications", { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
       .then(data => setNotifications(data))
       .catch(() => {})
