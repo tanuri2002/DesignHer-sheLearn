@@ -6,6 +6,7 @@ const palette = {
   violet:  "#6C3FC5",
   lavender:"#B39DDB",
   blush:   "#F3EEF9",
+  rose:    "#FCE4EC",
   mint:    "#D6F5EC",
   teal:    "#1B9E78",
   ink:     "#1A1A2E",
@@ -27,7 +28,7 @@ const values = [
   },
   {
     icon: "🤝",
-    bg: "#F3EEF9",
+    bg: "#FCE4EC",
     title: "Community first",
     desc: "We believe the best learning happens between peers. SheLearn is built on the idea that women lift each other up.",
   },
@@ -41,7 +42,7 @@ const values = [
     icon: "🤖",
     bg: "#FFF8E1",
     title: "AI that actually helps",
-    desc: "We use AI not to replace guidance — but to personalise it. Your roadmap is built around your goals, not a generic template.",
+    desc: "We use AI not to replace guidance - but to personalise it. Your roadmap is built around your goals, not a generic template.",
   },
 ];
 
@@ -57,8 +58,8 @@ const team = [
 
 const milestones = [
   { year: "2024", label: "The idea", detail: "Noticed that female engineering students struggled to find structured guidance for their career paths." },
-  { year: "2025", label: "Research", detail: "Talked to students across departments to understand the real gaps — resources, community, and direction." },
-  { year: "2026", label: "SheLearn is born", detail: "Built and launched for DesignHer 2.0 — an AI-powered platform combining roadmaps, resources, and peer connection." },
+  { year: "2025", label: "Research", detail: "Talked to students across departments to understand the real gaps - resources, community, and direction." },
+  { year: "2026", label: "SheLearn is born", detail: "Built and launched for DesignHer 2.0 - an AI-powered platform combining roadmaps, resources, and peer connection." },
 ];
 
 export default function About() {
@@ -104,7 +105,7 @@ export default function About() {
             color: "rgba(255,255,255,0.70)",
             lineHeight: 1.75, maxWidth: 540, margin: "0 auto",
           }}>
-            SheLearn started with a simple frustration — too many talented women not knowing where to begin. We built the platform we wished we had.
+            SheLearn started with a simple frustration - too many talented women not knowing where to begin. We built the platform we wished we had.
           </p>
         </div>
       </section>

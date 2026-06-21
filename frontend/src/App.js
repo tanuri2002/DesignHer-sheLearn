@@ -1,3 +1,4 @@
+import { AuthProvider } from "./context/AuthContext";
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
@@ -9,9 +10,11 @@ import About from './pages/About';
 import Peers from './pages/Peers';
 import LearningTracks from './pages/LearningTracks';
 import NavigationBar from './components/NavigationBar';
+import ProfileSetup from './pages/ProfileSetup';
 
 const App = () => {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <div>
         <NavigationBar />
@@ -22,9 +25,11 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/peers" element={<Peers />} />
           <Route path="/tracks" element={<LearningTracks />} />
+          <Route path="/profile-setup" element={<ProfileSetup />} />setup page
         </Routes>
       </div>
     </BrowserRouter>
+  </AuthProvider>
   );
 }
 

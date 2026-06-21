@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SheLearn 🎓✨
 > A peer skill exchange and AI-powered learning platform built for women in engineering.
 

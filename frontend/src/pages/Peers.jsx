@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 const palette = {
   plum:    "#3B1F5E",
@@ -15,91 +14,45 @@ const palette = {
 
 const font = {
   display: "'Georgia', 'Times New Roman', serif",
-  body:    "'Poppins',sans-serif",
+  body:    "'Inter', 'Segoe UI', system-ui, sans-serif",
 };
-
-const ALL_PEERS = [
-  {
-    id: 1, initials: "KP", bg: "#EEEDFE", col: "#534AB7",
-    name: "Kavya Perera", year: "2nd year", dept: "EE",
-    rating: 5.0, reviews: 12, available: true,
-    teaches: ["React", "TypeScript", "Tailwind CSS"],
-    learning: ["Node.js", "Docker"],
-    category: ["Frontend"],
-    bio: "Frontend enthusiast who loves building beautiful UIs. Happy to help with anything React or TypeScript!",
-  },
-  {
-    id: 2, initials: "AM", bg: "#FBEAF0", col: "#993556",
-    name: "Asel Mendis", year: "3rd year", dept: "CE",
-    rating: 4.7, reviews: 9, available: true,
-    teaches: ["Python", "Data analysis", "Pandas"],
-    learning: ["React", "REST APIs"],
-    category: ["AI/ML", "Backend"],
-    bio: "Data science lover who enjoys turning raw numbers into meaningful insights.",
-  },
-  {
-    id: 3, initials: "DP", bg: "#E1F5EE", col: "#0F6E56",
-    name: "Dinali Pathirana", year: "4th year", dept: "CE",
-    rating: 4.9, reviews: 18, available: false, busyUntil: "5 PM",
-    teaches: ["Node.js", "MongoDB", "Express"],
-    learning: ["Flutter"],
-    category: ["Backend"],
-    bio: "Backend developer passionate about building scalable APIs and clean architecture.",
-  },
-  {
-    id: 4, initials: "SN", bg: "#E6F1FB", col: "#185FA5",
-    name: "Sachini Navaratne", year: "2nd year", dept: "EE",
-    rating: 4.6, reviews: 7, available: true,
-    teaches: ["Figma", "UI/UX", "Prototyping"],
-    learning: ["Python", "ML basics"],
-    category: ["Design"],
-    bio: "UX designer who believes great products start with great design. Figma is my superpower.",
-  },
-  {
-    id: 5, initials: "RL", bg: "#FFF3E0", col: "#E65100",
-    name: "Raya Liyanage", year: "3rd year", dept: "CE",
-    rating: 5.0, reviews: 14, available: true,
-    teaches: ["Public speaking", "LaTeX", "Research writing"],
-    learning: ["React", "TypeScript"],
-    category: ["Other"],
-    bio: "Loves helping peers communicate their ideas clearly — in presentations, papers, and beyond.",
-  },
-  {
-    id: 6, initials: "MK", bg: "#EAF3DE", col: "#3B6D11",
-    name: "Malsha Kumari", year: "4th year", dept: "CE",
-    rating: 4.8, reviews: 11, available: false,
-    teaches: ["ML basics", "Scikit-learn", "TensorFlow"],
-    learning: ["Flutter", "Firebase"],
-    category: ["AI/ML"],
-    bio: "AI/ML enthusiast helping beginners take their first steps into machine learning.",
-  },
-  {
-    id: 7, initials: "NF", bg: "#FDE8F0", col: "#AD1457",
-    name: "Nethmi Fernando", year: "3rd year", dept: "EE",
-    rating: 4.5, reviews: 6, available: true,
-    teaches: ["Cybersecurity basics", "Networking", "Linux"],
-    learning: ["Python", "Ethical hacking"],
-    category: ["Networking", "Other"],
-    bio: "Cybersecurity enthusiast passionate about helping others understand how to stay safe online.",
-  },
-  {
-    id: 8, initials: "IS", bg: "#E8F5E9", col: "#2E7D32",
-    name: "Imasha Silva", year: "2nd year", dept: "CE",
-    rating: 4.9, reviews: 8, available: true,
-    teaches: ["Java", "OOP concepts", "Data structures"],
-    learning: ["Spring Boot", "System design"],
-    category: ["Backend"],
-    bio: "Strong Java developer who loves explaining OOP concepts in a simple, relatable way.",
-  },
-];
 
 const CATEGORIES = ["All", "Frontend", "Backend", "AI/ML", "Design", "Networking", "Other"];
 
-function StarRating({ rating }) {
+// Deterministic avatar color from a name — same person always gets the
+// same color without us having to store it anywhere.
+const AVATAR_PALETTES = [
+  { bg: "#EEEDFE", col: "#534AB7" },
+  { bg: "#FBEAF0", col: "#993556" },
+  { bg: "#E1F5EE", col: "#0F6E56" },
+  { bg: "#E6F1FB", col: "#185FA5" },
+  { bg: "#FFF3E0", col: "#E65100" },
+  { bg: "#EAF3DE", col: "#3B6D11" },
+  { bg: "#FDE8F0", col: "#AD1457" },
+  { bg: "#E8F5E9", col: "#2E7D32" },
+];
+
+function avatarFor(name = "") {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length];
+}
+
+function initialsFor(name = "") {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] || "") + (parts[1]?.[0] || "")).toUpperCase();
+}
+
+function StarRating({ rating, reviews }) {
+  const r = rating || 0;
   return (
-    <span style={{ color: "#EF9F27", fontSize: 13 }}>
-      {"★".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
-      <span style={{ color: palette.muted, fontSize: 12, marginLeft: 4 }}>{rating.toFixed(1)}</span>
+    <span>
+      <span style={{ color: "#EF9F27", fontSize: 13 }}>
+        {"★".repeat(Math.floor(r))}{"☆".repeat(5 - Math.floor(r))}
+      </span>
+      <span style={{ color: palette.muted, fontSize: 12, marginLeft: 4 }}>
+        {r > 0 ? r.toFixed(1) : "New"}{reviews ? ` (${reviews})` : ""}
+      </span>
     </span>
   );
 }
@@ -123,6 +76,10 @@ function SkillTag({ label, variant }) {
 
 function PeerCard({ peer, onBook }) {
   const [expanded, setExpanded] = useState(false);
+  const avatar = avatarFor(peer.fullName);
+  const initials = initialsFor(peer.fullName);
+  const teaches = peer.teaches || [];
+  const learning = peer.learning || [];
 
   return (
     <div style={{
@@ -139,15 +96,14 @@ function PeerCard({ peer, onBook }) {
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
         <div style={{
           width: 46, height: 46, borderRadius: "50%",
-          background: peer.bg, color: peer.col,
+          background: avatar.bg, color: avatar.col,
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 14, fontWeight: 600, fontFamily: font.body, flexShrink: 0,
-        }}>{peer.initials}</div>
+        }}>{initials}</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: palette.ink }}>{peer.name}</div>
-          <div style={{ fontFamily: font.body, fontSize: 12, color: palette.muted }}>{peer.year} · {peer.dept}</div>
-          <StarRating rating={peer.rating} />
-          <span style={{ fontFamily: font.body, fontSize: 11, color: palette.muted, marginLeft: 4 }}>({peer.reviews} reviews)</span>
+          <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: palette.ink }}>{peer.fullName}</div>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: palette.muted }}>{peer.year} · {peer.department}</div>
+          <StarRating rating={peer.rating} reviews={peer.reviewCount} />
         </div>
         <div>
           {peer.available ? (
@@ -158,32 +114,41 @@ function PeerCard({ peer, onBook }) {
           ) : (
             <span style={{ fontFamily: font.body, fontSize: 11, color: "#E65100", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#E65100", display: "inline-block" }} />
-              Busy{peer.busyUntil ? ` until ${peer.busyUntil}` : ""}
+              Busy
             </span>
           )}
         </div>
       </div>
 
       {/* Bio */}
-      {expanded && (
+      {expanded && peer.bio && (
         <p style={{ fontFamily: font.body, fontSize: 13, color: palette.muted, lineHeight: 1.6, margin: 0 }}>
           {peer.bio}
         </p>
       )}
 
       {/* Skills */}
-      <div>
-        <div style={{ fontFamily: font.body, fontSize: 11, color: palette.muted, marginBottom: 5 }}>Teaches</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-          {peer.teaches.map(s => <SkillTag key={s} label={s} variant="teach" />)}
+      {teaches.length > 0 && (
+        <div>
+          <div style={{ fontFamily: font.body, fontSize: 11, color: palette.muted, marginBottom: 5 }}>Teaches</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+            {teaches.map(s => <SkillTag key={s} label={s} variant="teach" />)}
+          </div>
         </div>
-      </div>
-      <div>
-        <div style={{ fontFamily: font.body, fontSize: 11, color: palette.muted, marginBottom: 5 }}>Learning</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-          {peer.learning.map(s => <SkillTag key={s} label={s} variant="learn" />)}
+      )}
+      {learning.length > 0 && (
+        <div>
+          <div style={{ fontFamily: font.body, fontSize: 11, color: palette.muted, marginBottom: 5 }}>Learning</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+            {learning.map(s => <SkillTag key={s} label={s} variant="learn" />)}
+          </div>
         </div>
-      </div>
+      )}
+      {teaches.length === 0 && learning.length === 0 && (
+        <p style={{ fontFamily: font.body, fontSize: 12, color: palette.muted, fontStyle: "italic" }}>
+          Hasn't added any skills yet.
+        </p>
+      )}
 
       {/* Footer */}
       <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
@@ -218,9 +183,28 @@ function BookingModal({ peer, onClose }) {
   const [submitted, setSubmitted] = useState(false);
   const [topic, setTopic] = useState("");
   const [slot, setSlot] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const slots = ["9:00 AM", "10:30 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM"];
-  const taken = ["10:30 AM", "2:30 PM"];
+
+  const confirmBooking = async () => {
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ peerId: peer._id, topic, slot }),
+      });
+      if (!res.ok) throw new Error("Could not book this session. Please try a different slot.");
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (submitted) {
     return (
@@ -235,7 +219,7 @@ function BookingModal({ peer, onClose }) {
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
           <h3 style={{ fontFamily: font.display, fontSize: 20, color: palette.plum, marginBottom: 8 }}>Session booked!</h3>
           <p style={{ fontFamily: font.body, fontSize: 13, color: palette.muted, lineHeight: 1.7, marginBottom: "1.5rem" }}>
-            Your session with <b>{peer.name}</b> has been confirmed. Check your dashboard for details.
+            Your session with <b>{peer.fullName}</b> has been confirmed. Check your dashboard for details.
           </p>
           <button onClick={onClose} style={{
             fontFamily: font.body, fontSize: 14, fontWeight: 600,
@@ -246,6 +230,9 @@ function BookingModal({ peer, onClose }) {
       </div>
     );
   }
+
+  const avatar = avatarFor(peer.fullName);
+  const initials = initialsFor(peer.fullName);
 
   return (
     <div style={{
@@ -266,12 +253,12 @@ function BookingModal({ peer, onClose }) {
 
         {/* Peer info */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, background: palette.blush, borderRadius: 12, padding: "12px 14px", marginBottom: "1.25rem" }}>
-          <div style={{ width: 40, height: 40, borderRadius: "50%", background: peer.bg, color: peer.col, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, fontFamily: font.body }}>
-            {peer.initials}
+          <div style={{ width: 40, height: 40, borderRadius: "50%", background: avatar.bg, color: avatar.col, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, fontFamily: font.body }}>
+            {initials}
           </div>
           <div>
-            <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: palette.ink }}>{peer.name}</div>
-            <div style={{ fontFamily: font.body, fontSize: 12, color: palette.muted }}>{peer.teaches.join(" · ")}</div>
+            <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: palette.ink }}>{peer.fullName}</div>
+            <div style={{ fontFamily: font.body, fontSize: 12, color: palette.muted }}>{(peer.teaches || []).join(" · ") || "No skills listed yet"}</div>
           </div>
         </div>
 
@@ -293,45 +280,48 @@ function BookingModal({ peer, onClose }) {
         </div>
 
         {/* Time slots */}
-        <div style={{ marginBottom: "1.5rem" }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label style={{ fontFamily: font.body, fontSize: 13, fontWeight: 500, color: palette.ink, display: "block", marginBottom: 8 }}>Pick a time slot</label>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {slots.map(s => {
-              const isTaken = taken.includes(s);
               const isPicked = slot === s;
               return (
-                <button key={s} disabled={isTaken} onClick={() => setSlot(s)} style={{
+                <button key={s} onClick={() => setSlot(s)} style={{
                   padding: "8px 0",
                   fontFamily: font.body, fontSize: 12,
-                  borderRadius: 10, cursor: isTaken ? "not-allowed" : "pointer",
+                  borderRadius: 10, cursor: "pointer",
                   border: isPicked ? `2px solid ${palette.violet}` : `1px solid ${palette.border}`,
-                  background: isTaken ? "#F5F5F5" : isPicked ? "#EEEDFE" : "#fff",
-                  color: isTaken ? "#BDBDBD" : isPicked ? palette.violet : palette.ink,
+                  background: isPicked ? "#EEEDFE" : "#fff",
+                  color: isPicked ? palette.violet : palette.ink,
                   fontWeight: isPicked ? 600 : 400,
                   transition: "all 0.15s",
                 }}>
-                  {isTaken ? `${s} ✕` : s}
+                  {s}
                 </button>
               );
             })}
           </div>
         </div>
 
+        {error && (
+          <div style={{ fontFamily: font.body, fontSize: 12, color: "#D32F2F", marginBottom: "0.75rem" }}>{error}</div>
+        )}
+
         {/* Confirm */}
         <button
-          disabled={!topic || !slot}
-          onClick={() => setSubmitted(true)}
+          disabled={!topic || !slot || submitting}
+          onClick={confirmBooking}
           style={{
             width: "100%", padding: "12px",
             fontFamily: font.body, fontSize: 14, fontWeight: 600,
-            background: topic && slot ? palette.violet : "#E0D9F0",
-            color: topic && slot ? "#fff" : palette.muted,
+            background: topic && slot && !submitting ? palette.violet : "#E0D9F0",
+            color: topic && slot && !submitting ? "#fff" : palette.muted,
             border: "none", borderRadius: 30,
-            cursor: topic && slot ? "pointer" : "not-allowed",
+            cursor: topic && slot && !submitting ? "pointer" : "not-allowed",
             transition: "background 0.15s",
           }}
         >
-          Confirm booking →
+          {submitting ? "Booking..." : "Confirm booking →"}
         </button>
       </div>
     </div>
@@ -344,12 +334,38 @@ export default function Peers() {
   const [availableOnly, setAvailableOnly] = useState(false);
   const [bookingPeer, setBookingPeer] = useState(null);
 
-  const filtered = ALL_PEERS.filter(p => {
+  const [peers, setPeers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch real peers from the backend — the backend only ever returns
+  // users who have showOnPeerPage: true. No hardcoded data here at all.
+  useEffect(() => {
+    const fetchPeers = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/peers");
+        if (!res.ok) throw new Error("Could not load peers right now.");
+        const data = await res.json();
+        setPeers(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPeers();
+  }, []);
+
+  const filtered = peers.filter(p => {
+    const teaches = p.teaches || [];
+    const learning = p.learning || [];
     const matchSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.teaches.some(s => s.toLowerCase().includes(search.toLowerCase())) ||
-      p.learning.some(s => s.toLowerCase().includes(search.toLowerCase()));
-    const matchCat = category === "All" || p.category.includes(category);
+      (p.fullName || "").toLowerCase().includes(search.toLowerCase()) ||
+      teaches.some(s => s.toLowerCase().includes(search.toLowerCase())) ||
+      learning.some(s => s.toLowerCase().includes(search.toLowerCase()));
+    const matchCat = category === "All" || (p.category || []).includes(category);
     const matchAvail = !availableOnly || p.available;
     return matchSearch && matchCat && matchAvail;
   });
@@ -385,10 +401,10 @@ export default function Peers() {
         <p style={{
           fontFamily: font.body, fontSize: 15,
           color: "rgba(255,255,255,0.68)",
-          maxWidth:600, margin: "0 auto",
+          maxWidth: 480, margin: "0 auto",
           lineHeight: 1.7,
         }}>
-          Browse peers who can teach you what you need - and learn from you in return.
+          Browse peers who can teach you what you need — and learn from you in return.
         </p>
       </section>
 
@@ -448,23 +464,50 @@ export default function Peers() {
 
       {/* Peer grid */}
       <section style={{ padding: "2rem", maxWidth: 980, margin: "0 auto" }}>
-        <div style={{ fontFamily: font.body, fontSize: 13, color: palette.muted, marginBottom: "1rem" }}>
-          Showing <b style={{ color: palette.ink }}>{filtered.length}</b> peers
-          {category !== "All" && <span> in <b style={{ color: palette.violet }}>{category}</b></span>}
-          {availableOnly && <span> · <b style={{ color: palette.teal }}>available now</b></span>}
-        </div>
 
-        {filtered.length === 0 ? (
+        {loading && (
           <div style={{ textAlign: "center", padding: "4rem 2rem", color: palette.muted }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
-            <p style={{ fontFamily: font.body, fontSize: 15 }}>No peers found. Try a different search or filter.</p>
+            <div style={{
+              width: 40, height: 40, margin: "0 auto 1rem",
+              border: `4px solid ${palette.border}`, borderTopColor: palette.violet,
+              borderRadius: "50%", animation: "spin 0.9s linear infinite",
+            }} />
+            <style>{"@keyframes spin { to { transform: rotate(360deg); } }"}</style>
+            <p style={{ fontFamily: font.body, fontSize: 14 }}>Loading peers...</p>
           </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
-            {filtered.map(peer => (
-              <PeerCard key={peer.id} peer={peer} onBook={setBookingPeer} />
-            ))}
+        )}
+
+        {!loading && error && (
+          <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#D32F2F" }}>
+            <p style={{ fontFamily: font.body, fontSize: 14 }}>{error}</p>
           </div>
+        )}
+
+        {!loading && !error && (
+          <>
+            <div style={{ fontFamily: font.body, fontSize: 13, color: palette.muted, marginBottom: "1rem" }}>
+              Showing <b style={{ color: palette.ink }}>{filtered.length}</b> peers
+              {category !== "All" && <span> in <b style={{ color: palette.violet }}>{category}</b></span>}
+              {availableOnly && <span> · <b style={{ color: palette.teal }}>available now</b></span>}
+            </div>
+
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "4rem 2rem", color: palette.muted }}>
+                <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
+                <p style={{ fontFamily: font.body, fontSize: 15 }}>
+                  {peers.length === 0
+                    ? "No peers have joined the community yet. Be the first!"
+                    : "No peers found. Try a different search or filter."}
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+                {filtered.map(peer => (
+                  <PeerCard key={peer._id} peer={peer} onBook={setBookingPeer} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </section>
 

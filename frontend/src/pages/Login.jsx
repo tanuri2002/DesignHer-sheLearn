@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const palette = {
   plum:    "#3B1F5E",
@@ -19,11 +20,14 @@ const font = {
 };
 
 export default function Login() {
+  const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+  
   const handle = (e) => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
@@ -37,11 +41,38 @@ export default function Login() {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    setSubmitted(true);
+
+    setServerError("");
+    setSubmitting(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        // Backend should return a generic message for both
+        // "user not found" and "wrong password" — don't leak which one.
+        throw new Error(data.message || "Invalid email or password.");
+      }
+
+      // Store auth token so the rest of the app knows the user is logged in
+      login(data.user, data.token);
+
+      setSubmitted(true);
+    } catch (err) {
+      setServerError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputStyle = (field) => ({
@@ -257,18 +288,26 @@ export default function Login() {
             </label>
           </div>
 
-          {/* Submit */}
-          <button type="submit" style={{
+          {serverError && (
+            <div style={{
+              background: "#FDECEC", border: `1px solid ${palette.error}`,
+              borderRadius: 10, padding: "10px 14px", marginBottom: "1rem",
+            }}>
+              <span style={{ fontFamily: font.body, fontSize: 13, color: palette.error }}>{serverError}</span>
+            </div>
+          )}
+
+          <button type="submit" disabled={submitting} style={{
             width: "100%", padding: "12px",
             fontFamily: font.body, fontSize: 15, fontWeight: 600,
-            background: palette.violet, color: "#fff",
-            border: "none", borderRadius: 30, cursor: "pointer",
+            background: submitting ? "#B7AEDD" : palette.violet, color: "#fff",
+            border: "none", borderRadius: 30, cursor: submitting ? "not-allowed" : "pointer",
             transition: "background 0.15s",
           }}
-            onMouseEnter={e => e.target.style.background = palette.plum}
-            onMouseLeave={e => e.target.style.background = palette.violet}
+            onMouseEnter={e => { if (!submitting) e.target.style.background = palette.plum; }}
+            onMouseLeave={e => { if (!submitting) e.target.style.background = palette.violet; }}
           >
-            Log in →
+            {submitting ? "Logging in..." : "Log in →"}
           </button>
         </form>
 

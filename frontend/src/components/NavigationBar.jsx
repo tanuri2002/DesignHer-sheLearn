@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-// Asset in public/ — reference via absolute path at runtime
+import { useAuth } from "../context/AuthContext";
+
 const logo_new = "/logo_new.png";
 
 const palette = {
@@ -23,13 +24,11 @@ const navLinks = [
   { label: "About",           path: "/about" },
   { label: "Learning Tracks", path: "/tracks" },
   { label: "Find Peers",      path: "/peers" },
-  //{ label: "Leaderboard",     path: "/leaderboard" },
-  { label: "Contact",         path: "/contact" },
 ];
 
 export default function NavigationBar() {
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const isActive = (path) => location.pathname === path;
 
@@ -46,36 +45,26 @@ export default function NavigationBar() {
     }}>
 
       {/* Logo */}
-      <Link
-      to="/"
-      style={{
+      <Link to="/" style={{
         textDecoration: "none",
         display: "flex",
         alignItems: "center",
         gap: "10px",
-      }}
-    >
-      <img
-        src={logo_new}
-        alt="SheLearn Logo"
-        style={{
-          width: "36px",
-          height: "36px",
-          objectFit: "contain",
-        }}
-      />
-
-      <span
-        style={{
+      }}>
+        <img
+          src={logo_new}
+          alt="SheLearn Logo"
+          style={{ width: "36px", height: "36px", objectFit: "contain" }}
+        />
+        <span style={{
           fontFamily: font.display,
           fontSize: 22,
           color: palette.plum,
           letterSpacing: "-0.5px",
-        }}
-      >
-        She<span style={{ color: palette.violet }}>Learn</span>
-      </span>
-    </Link>
+        }}>
+          She<span style={{ color: palette.violet }}>Learn</span>
+        </span>
+      </Link>
 
       {/* Desktop links */}
       <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
@@ -107,31 +96,57 @@ export default function NavigationBar() {
           </Link>
         ))}
 
-        {/* Auth buttons */}
-        <Link to="/login" style={{
-          fontSize: 13, color: palette.violet,
-          textDecoration: "none", padding: "6px 16px",
-          borderRadius: 20, border: `1px solid ${palette.violet}`,
-          marginLeft: 8, transition: "all 0.15s",
-        }}
-          onMouseEnter={e => { e.target.style.background = palette.blush; }}
-          onMouseLeave={e => { e.target.style.background = "transparent"; }}
-        >
-          Log in
-        </Link>
+        {/* Auth area — swaps based on login state */}
+        {user ? (
+          <Link
+            to="/profile-setup"
+            className="ml-3 relative inline-flex items-center gap-2 rounded-full px-4 py-1.5
+                       bg-gradient-to-r from-violet-600 via-fuchsia-500 to-violet-600
+                       bg-[length:200%_100%] animate-shimmer
+                       text-white text-sm font-semibold shadow-lg shadow-violet-300/50
+                       hover:scale-105 transition-transform duration-200"
+          >
+            {user.profilePicture ? (
+              <img
+                src={user.profilePicture}
+                alt="Profile"
+                className="w-6 h-6 rounded-full object-cover border-2 border-white"
+              />
+            ) : (
+              <span className="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center text-xs">
+                {user.fullName?.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span>Profile</span>
+          </Link>
+        ) : (
+          <>
+            <Link to="/login" style={{
+              fontSize: 13, color: palette.violet,
+              textDecoration: "none", padding: "6px 16px",
+              borderRadius: 20, border: `1px solid ${palette.violet}`,
+              marginLeft: 8, transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { e.target.style.background = palette.blush; }}
+              onMouseLeave={e => { e.target.style.background = "transparent"; }}
+            >
+              Log in
+            </Link>
 
-        <Link to="/signup" style={{
-          fontSize: 13, fontWeight: 600,
-          background: palette.violet, color: "#fff",
-          textDecoration: "none", padding: "7px 18px",
-          borderRadius: 20, marginLeft: 4,
-          transition: "all 0.15s",
-        }}
-          onMouseEnter={e => { e.target.style.background = palette.plum; }}
-          onMouseLeave={e => { e.target.style.background = palette.violet; }}
-        >
-          Get started
-        </Link>
+            <Link to="/signup" style={{
+              fontSize: 13, fontWeight: 600,
+              background: palette.violet, color: "#fff",
+              textDecoration: "none", padding: "7px 18px",
+              borderRadius: 20, marginLeft: 4,
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { e.target.style.background = palette.plum; }}
+              onMouseLeave={e => { e.target.style.background = palette.violet; }}
+            >
+              Get started
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
